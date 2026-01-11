@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-Spider</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- 自定义样式 -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧导航栏 -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="bi bi-bug-fill logo-icon"></i>
+                <span class="logo-text">X-SPIDER</span>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item active" data-page="download">
+                    <i class="bi bi-download"></i>
+                    <span>下载管理</span>
+                </li>
+                <li class="nav-item" data-page="settings">
+                    <i class="bi bi-gear"></i>
+                    <span>设置中心</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <div class="open-source-badge">
+                    <span>OPEN SOURCE</span>
+                    <a href="https://github.com" target="_blank"><i class="bi bi-github"></i></a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 下载管理页 -->
+            <div id="page-download" class="page active">
+                <div class="page-grid">
+                    <!-- 左侧区域 -->
+                    <div class="left-column">
+                        <!-- 输入区域 -->
+                        <div class="card input-card">
+                            <div class="card-header">
+                                <span class="card-title">输入数据源 (INPUT)</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="input-group">
+                                    <input type="text" id="task-input" class="form-control" 
+                                           placeholder="支持 @ 分隔批量添加，如 @ElonMusk @VitalikButerin">
+                                    <button class="btn btn-primary" id="btn-add-task">
+                                        <i class="bi bi-plus-lg"></i> 添加任务
+                                    </button>
+                                </div>
+                                <div class="quick-buttons">
+                                    <button class="btn btn-outline-secondary" id="btn-add-bookmarks">
+                                        <i class="bi bi-bookmark"></i> 同步书签
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="btn-add-likes">
+                                        <i class="bi bi-heart"></i> 同步喜欢
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 任务队列 -->
+                        <div class="card queue-card">
+                            <div class="card-header">
+                                <span class="card-title">任务执行队列</span>
+                                <span class="badge bg-primary" id="task-count">0</span>
+                            </div>
+                            <div class="card-body">
+                                <div id="task-list" class="task-list">
+                                    <div class="empty-state">
+                                        <i class="bi bi-plus-circle"></i>
+                                        <p>暂未添加采集任务</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 日志区域 -->
+                        <div class="card log-card">
+                            <div class="card-header">
+                                <span class="card-title"><i class="bi bi-terminal"></i> 核心终端日志</span>
+                                <button class="btn btn-sm btn-outline-secondary" id="btn-clear-log">
+                                    <i class="bi bi-trash"></i> 清空输出日志
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div id="log-container" class="log-container"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧控制面板 -->
+                    <div class="right-column">
+                        <div class="card control-card">
+                            <div class="card-header">
+                                <span class="card-title">控制台核心</span>
+                                <div class="status-indicator" id="engine-status">
+                                    <span class="status-dot"></span>
+                                </div>
+                            </div>
+                            <!-- 自动清空列表选项已移除 (v5.0) -->
+                            <div class="card-body">
+                                <button class="btn btn-success btn-lg w-100" id="btn-start-engine">
+                                    <i class="bi bi-play-fill"></i> 启动引擎
+                                </button>
+                                <button class="btn btn-outline-info w-100 mt-3" id="btn-history">
+                                    <i class="bi bi-clock-history"></i> 查看历史记录
+                                </button>
+                                <button class="btn btn-outline-success w-100 mt-2" id="btn-finished">
+                                    <i class="bi bi-check-circle"></i> 查看已完成
+                                </button>
+                                <button class="btn btn-outline-danger w-100 mt-2" id="btn-clear-tasks">
+                                    <i class="bi bi-trash3"></i> 清空全部任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设置页 -->
+            <div id="page-settings" class="page">
+                <div class="settings-grid">
+                    <!-- 基础设置 -->
+                    <div class="card settings-card">
+                        <div class="card-header">
+                            <div>
+                                <i class="bi bi-gear"></i>
+                                <span class="card-title">基础设置</span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-warning" id="btn-reset-settings">
+                                <i class="bi bi-arrow-counterclockwise"></i> 重置为默认
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- 账号与凭证 -->
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    账号与凭证
+                                    <i class="bi bi-info-circle tooltip-icon" 
+                                       data-bs-toggle="tooltip" 
+                                       data-bs-title="点击启动登录向导。如果已登录，显示"更新 Cookie"。"></i>
+                                </label>
+                                <div class="setting-control">
+                                    <button class="btn btn-outline-primary" id="btn-login">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="btn-export">
+                                        <i class="bi bi-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- 存储路径 -->
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    存储路径 (path)
+                                    <i class="bi bi-info-circle tooltip-icon" 
+                                       data-bs-toggle="tooltip" 
+                                       data-bs-title="所有媒体文件的保存根目录。"></i>
+                                </label>
+                                <div class="setting-control path-control">
+                                    <input type="text" class="form-control" id="setting-path" readonly>
+                                    <button class="btn btn-outline-secondary" id="btn-select-path">
+                                        <i class="bi bi-folder2-open"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- 浏览器内核 -->
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    浏览器内核 (browser)
+                                    <i class="bi bi-info-circle tooltip-icon" 
+                                       data-bs-toggle="tooltip" 
+                                       data-bs-title="选择爬虫驱动的浏览器内核。建议优先使用 Edge。"></i>
+                                </label>
+                                <div class="setting-control">
+                                    <select class="form-select" id="setting-browser">
+                                        <option value="Edge">Microsoft Edge</option>
+                                        <option value="Chrome">Google Chrome</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 内容过滤 -->
+                    <div class="card settings-card">
+                        <div class="card-header">
+                            <i class="bi bi-funnel"></i>
+                            <span class="card-title">内容过滤</span>
+                        </div>
+                        <div class="card-body">
+                            <!-- 下载类型 -->
+                            <div class="setting-item">
+                                <div class="toggle-group">
+                                    <div class="toggle-item">
+                                        <label>
+                                            图片 (img)
+                                            <i class="bi bi-info-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-title="是否下载推文中的图片内容。"></i>
+                                        </label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="setting-dl-images" checked>
+                                        </div>
+                                    </div>
+                                    <div class="toggle-item">
+                                        <label>
+                                            视频 (vid)
+                                            <i class="bi bi-info-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-title="是否下载推文中的视频。注意：推特 GIF 本质上也是 MP4 视频。"></i>
+                                        </label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="setting-dl-gifs">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 视频大小限制 -->
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    视频大小限制 (MB)
+                                    <i class="bi bi-info-circle tooltip-icon" 
+                                       data-bs-toggle="tooltip" 
+                                       data-bs-title="超过此大小(MB)的视频将被跳过。设为 0 代表无限制。若只想下载 GIF，建议设为 5MB。也不建议修改用来下载长视频,目前只能算是随机爬取网址下的视频，视频下载的还不完全。"></i>
+                                </label>
+                                <div class="setting-control">
+                                    <input type="number" class="form-control" id="setting-max-video-size" value="5" min="0">
+                                </div>
+                            </div>
+                            <!-- 并列选项：数据留痕 & 临时文件 -->
+                            <div class="setting-item">
+                                <div class="toggle-group">
+                                    <div class="toggle-item">
+                                        <label>
+                                            数据留痕 (link.txt)
+                                            <i class="bi bi-info-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-title="在下载目录中创建 link.txt 文件，记录每个文件对应的推文链接。"></i>
+                                        </label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="setting-create-link" checked>
+                                        </div>
+                                    </div>
+                                    <div class="toggle-item">
+                                        <label>
+                                            临时文件 (temp)
+                                            <i class="bi bi-info-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-title="开启后，所有媒体文件将先以 .tmp 后缀进行下载，只有下载成功后才会重命名为正式格式。这可以有效防止因断网或崩溃产生的损坏文件残留在下载文件夹中。"></i>
+                                        </label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="setting-use-tmp-files" checked>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 爬虫策略 -->
+                    <div class="card settings-card">
+                        <div class="card-header">
+                            <i class="bi bi-clock"></i>
+                            <span class="card-title">爬虫策略</span>
+                        </div>
+                        <div class="card-body">
+                            <!-- 旧图阈值 -->
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    旧图阈值 (thresh)
+                                    <i class="bi bi-info-circle tooltip-icon" 
+                                       data-bs-toggle="tooltip" 
+                                       data-bs-title="连续遇到多少张&quot;已下载&quot;图片后自动停止任务。用于增量更新。"></i>
+                                </label>
+                                <div class="setting-control">
+                                    <input type="number" class="form-control" id="setting-thresh" value="70" min="1">
+                                </div>
+                            </div>
+                            <!-- 超时和无头 -->
+                            <!-- 超时 -->
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    超时 (s)
+                                    <i class="bi bi-info-circle tooltip-icon" 
+                                       data-bs-toggle="tooltip" 
+                                       data-bs-title="页面加载或网络请求的最大等待时间(秒)。网速慢请调大此值。"></i>
+                                </label>
+                                <div class="setting-control">
+                                    <input type="number" class="form-control" id="setting-timeout" value="60" min="10">
+                                </div>
+                            </div>
+                            <!-- 模式并排组 -->
+                            <div class="setting-row multi-col">
+                                <div class="setting-item compact">
+                                    <label class="setting-label">
+                                        无头模式
+                                        <i class="bi bi-info-circle tooltip-icon" 
+                                           data-bs-toggle="tooltip" 
+                                           data-bs-title="👻 隐身模式：浏览器在后台运行。"></i>
+                                    </label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="setting-headless">
+                                    </div>
+                                </div>
+                                <div class="setting-item compact">
+                                    <label class="setting-label">
+                                        穿透模式
+                                        <i class="bi bi-info-circle tooltip-icon" 
+                                           data-bs-toggle="tooltip" 
+                                           data-bs-title="⚠️ 强制全量扫描，无视旧图阈值。"></i>
+                                    </label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="setting-deep-scan">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 性能并发 -->
+                    <div class="card settings-card">
+                        <div class="card-header">
+                            <i class="bi bi-lightning"></i>
+                            <span class="card-title">性能并发</span>
+                        </div>
+                        <div class="card-body">
+                            <!-- 页面并发 -->
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    页面并发 (pages)
+                                    <i class="bi bi-info-circle tooltip-icon" 
+                                       data-bs-toggle="tooltip" 
+                                       data-bs-title="同时打开的浏览器标签页数量。从 1 到 10。过高可能导致卡顿或限流,甚至封号(目前测试没遇到过)。"></i>
+                                </label>
+                                <div class="slider-control">
+                                    <input type="range" class="form-range" id="setting-concurrency" min="1" max="10" value="3">
+                                    <span class="slider-value" id="concurrency-value">3</span>
+                                </div>
+                            </div>
+                            <!-- 下载线程 -->
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    下载线程 (threads)
+                                    <i class="bi bi-info-circle tooltip-icon" 
+                                       data-bs-toggle="tooltip" 
+                                       data-bs-title="同时下载文件的数量。从 1 到 64。越大下载越快，但占用带宽越高。"></i>
+                                </label>
+                                <div class="slider-control">
+                                    <input type="range" class="form-range" id="setting-threads" min="1" max="64" value="16">
+                                    <span class="slider-value" id="threads-value">16</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 界面外观 -->
+                    <div class="card settings-card">
+                        <div class="card-header">
+                            <i class="bi bi-palette"></i>
+                            <span class="card-title">界面外观</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="appearance-row">
+                                <div class="setting-item">
+                                    <label class="setting-label">
+                                        主题模式 (Theme)
+                                        <i class="bi bi-info-circle tooltip-icon" 
+                                           data-bs-toggle="tooltip" 
+                                           data-bs-title="选择界面主题。"></i>
+                                    </label>
+                                    <div class="theme-buttons" id="theme-switcher">
+                                        <button class="btn btn-outline-secondary" data-theme="system">
+                                            <i class="bi bi-display"></i> 系统
+                                        </button>
+                                        <button class="btn btn-outline-secondary" data-theme="light">
+                                            <i class="bi bi-sun"></i> 明亮
+                                        </button>
+                                        <button class="btn btn-outline-secondary" data-theme="dark">
+                                            <i class="bi bi-moon-stars"></i> 深色
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 底部悬浮确认栏 (Action Bar) -->
+                <div class="settings-action-bar" id="settings-action-bar">
+                    <div class="action-bar-content">
+                        <div class="action-info">
+                            <i class="bi bi-info-circle-fill text-warning"></i>
+                            <span>配置已更改，确定要保存修改吗？</span>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary" id="btn-undo-settings">
+                                <i class="bi bi-arrow-counterclockwise"></i> 撤销回溯
+                            </button>
+                            <button class="btn btn-primary" id="btn-confirm-settings">
+                                <i class="bi bi-check-lg"></i> 确认修改
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 历史记录模态框 -->
+    <div class="modal fade" id="historyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clock-history"></i> 历史记录</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="history-list" class="history-list"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" id="btn-clear-all-history">
+                        <i class="bi bi-trash3"></i> 清空所有历史
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 已完成任务模态框 -->
+    <div class="modal fade" id="finishedModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-check-circle"></i> 本次启动已完成任务</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="finished-list" class="history-list"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示模态框 -->
+    <div class="modal fade" id="alertModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alert-title">提示</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="alert-message"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Eel -->
+    <script src="/eel.js"></script>
+    <!-- 应用逻辑 -->
+    <link rel="stylesheet" href="css/action_bar.css">
+    <script src="js/app.js"></script>
+
+    <!-- 提示音容器 -->
+    <div id="toast-container" class="toast-stack-container"></div>
+</body>
+</html>
