@@ -1,7 +1,7 @@
 # X-Spider (Ultimate GUI Edition)
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-9.0-blue.svg?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/version-1.0-blue.svg?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/python-3.8+-green.svg?style=for-the-badge" alt="Python">
   <img src="https://img.shields.io/badge/Playwright-Backend-orange.svg?style=for-the-badge" alt="Playwright">
   <img src="https://img.shields.io/badge/Eel-GUI-yellow.svg?style=for-the-badge" alt="Eel">
