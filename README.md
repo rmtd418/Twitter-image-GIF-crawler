@@ -11,18 +11,20 @@
 
 **X-Spider** 是一款专为媒体采集设计的下一代现代化推特下载工具。它将强大的 Playwright 爬虫内核与精致的 Web GUI 相结合，旨在为用户提供最丝滑、最稳定的离线归档体验。
 
-[查看功能详情](#-核心特性) • [快速开始](#-运行指南) • [常见问题](#-设置生效机制详解)
+[查看功能详情](#-核心特性) • [快速开始](#-运行指南) 
 
 ---
 
 ## 📸 界面预览 (Screenshots)
 
 <p align="center">
-  <!-- 建议：在此处替换为您实际封装后的软件截图 -->
-  <img src="web/assets/preview_main.png" alt="Main Interface" width="800" style="border-radius: 10px; border: 1px solid #333">
+  
+<img width="1200" height="" alt="PixPin_2026-01-11_18-07-37" src="https://github.com/user-attachments/assets/64807030-a348-4282-8e8a-24a16311e1d4"/>
+<img width="1200" height="" alt="PixPin_2026-01-11_18-07-44" src="https://github.com/user-attachments/assets/c1f088c8-2f7c-4aed-bfe5-38f4de63bf29" />
+
 </p>
 <p align="center">
-  <em>现代化深色模式设计，状态一目了然</em>
+  <em></em>
 </p>
 
 ---
